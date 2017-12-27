@@ -175,12 +175,11 @@
     <None Include="Resources\play.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SALT\SALT.csproj">
+    <ProjectReference Include="..\SALT\SALT\SALT.csproj">
       <Project>{90cbd9ab-41e3-4868-9632-f894f5bf5b26}</Project>
       <Name>SALT</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(SolutionDir)FITX\FITC\bin\$(ConfigurationName)\FITC.exe $(TargetDir)lib
