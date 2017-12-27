@@ -1,7 +1,7 @@
 # SM4SHCommand
 SM4SHCommand is a fully featured IDE for modifying and compiling moveset scripting code for Smash 4. The application is currently undergoing a substantial rewrite so many features are either unimplemented or WIP.
 
- - **Features**
+**Features**
    - Projects and Workspaces system, similar to Visual Studio's Projects and Solution files.
    - Extensible and modular Project Templates system for allowing users to create custom project directory frameworks.
    - TreeView based editor system means simple and easy workflow, simply double click on any file and an appropriate editor will be opened
@@ -9,7 +9,7 @@ SM4SHCommand is a fully featured IDE for modifying and compiling moveset scripti
    - Basic code completion for script files
    - Syntax Highlighting for script files
    
-**CREDITS**
+**Credits**
   - This application uses Open Source components. You can find the source code of
     their open source projects along with license information below. We acknowledge
     and are grateful to these developers for their contributions to open source.
