@@ -115,14 +115,15 @@ namespace Sm4shCommand.GUI
             {
                 IProjectTemplate template = GLOBALS.ProjectTemplates[i];
 
-                if (template.TemplateIcon != null)
-                {
-                    imageList1.Images.Add(template.TemplateIcon);
-                }
-
                 ListViewItem lvi = new ListViewItem(template.DisplayText);
                 lvi.Tag = template;
                 lvi.Font = f;
+
+                if (template.TemplateIcon != null)
+                {
+                    imageList1.Images.Add(template.DisplayText, template.TemplateIcon);
+                    lvi.ImageKey = template.DisplayText;
+                }
 
                 lstProjTemplate.Items.Add(lvi);
             }

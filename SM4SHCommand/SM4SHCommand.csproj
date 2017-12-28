@@ -180,6 +180,9 @@
       <Name>SALT</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ProjectTemplates\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(SolutionDir)FITX\FITC\bin\$(ConfigurationName)\FITC.exe $(TargetDir)lib

@@ -9,10 +9,28 @@ namespace Sm4shCommand
 {
     public interface IProjectTemplate
     {
+        /// <summary>
+        /// The Display Name of the Template
+        /// </summary>
         string DisplayText { get; set; }
+
+        /// <summary>
+        /// The Display Description of the template
+        /// </summary>
         string ProjDescription { get; set; }
+
+        /// <summary>
+        /// Icon associated with the Template
+        /// </summary>
         Image TemplateIcon { get; set; }
 
+        /// <summary>
+        /// Handles the creation of the project structure.
+        /// </summary>
+        /// <param name="filepath">Filepath to create the project file at</param>
+        /// <param name="name">Name of the project</param>
+        /// <param name="manager">Workspace Manager this project is associated with</param>
+        /// <returns>The processed project.</returns>
         Project CreateProject(string filepath, string name, WorkspaceManager manager);
     }
 
