@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Sm4shCommand
 {
@@ -59,6 +61,88 @@ namespace Sm4shCommand
             };
 
             return p;
+        }
+    }
+
+    public class DecompileProjectTemplate : IProjectTemplate
+    {
+        public DecompileProjectTemplate()
+        {
+            DisplayText = "Decompile New Project";
+            ProjDescription = "Creates a project by decompiling a fighter";
+        }
+
+        public string DisplayText { get; set; }
+        public string ProjDescription { get; set; }
+        public Image TemplateIcon { get; set; }
+
+        public Project CreateProject(string filepath, string name, WorkspaceManager manager)
+        {
+            var p = new FitProj
+            {
+                ProjFilepath = filepath,
+                ProjName = name,
+                Platform = ProjPlatform.WiiU,
+                ToolVer = Program.Version,
+                GameVer = "1.1.7",
+                ProjectGuid = Guid.NewGuid()
+            };
+
+            using (var fsd = new FolderSelectDialog())
+            {
+                if (fsd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        DecompileFighter(fsd.SelectedPath, Path.Combine(p.ProjDirectory, "Moveset"));
+                        foreach (var file in Directory.EnumerateFiles(Path.Combine(p.ProjDirectory, "Moveset"), "*.*", SearchOption.AllDirectories))
+                        {
+                            p.AddFile(file, false);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show(e.Message);
+                        return null;
+                    }
+                }
+            }
+            return p;
+        }
+
+        private void DecompileFighter(string fighterFolder, string output)
+        {
+            string mtable = Util.CanonicalizePath(Path.Combine(fighterFolder, "script/animcmd/body/motion.mtable"));
+            string motionFolder = Util.CanonicalizePath(Path.Combine(fighterFolder, "motion"));
+
+            if (File.Exists(mtable))
+            {
+                string args = $"\"{mtable}\" -o \"{output}\"";
+
+                if (Directory.Exists(motionFolder))
+                    args += $" -m \"{motionFolder}\"";
+
+                ProcessStartInfo start = new ProcessStartInfo
+                {
+                    Arguments = args,
+                    FileName = Util.CanonicalizePath(Path.Combine(GLOBALS.StartupDirectory, "lib/FITD.exe")),
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                };
+
+                Util.LogMessage("Decompiling with FITD..", ConsoleColor.Green);
+                using (var proc = Process.Start(start))
+                {
+                    while (!proc.HasExited)
+                    {
+                        while (!proc.StandardOutput.EndOfStream)
+                        {
+                            Util.LogMessage(proc.StandardOutput.ReadLine(), ConsoleColor.Blue);
+                        }
+                    }
+                    Util.LogMessage($"FITD has exited with code {proc.ExitCode}", ConsoleColor.Green);
+                }
+            }
         }
     }
 }

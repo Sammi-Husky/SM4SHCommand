@@ -41,13 +41,22 @@ namespace Sm4shCommand
 
     public class ITS_EDITOR : FastColoredTextBox
     {
-        TextStyle keywordStyle = new TextStyle(Brushes.Blue, null, FontStyle.Regular);
+
+        TextStyle KeywordStyle = new TextStyle(Brushes.Blue, null, FontStyle.Regular);
         TextStyle HexStyle = new TextStyle(Brushes.DarkCyan, null, FontStyle.Regular);
         TextStyle DecStyle = new TextStyle(Brushes.Red, null, FontStyle.Regular);
         TextStyle StrStyle = new TextStyle(Brushes.Chocolate, null, FontStyle.Regular);
         TextStyle CommentStyle = new TextStyle(Brushes.DarkGreen, null, FontStyle.Regular);
 
         public AutocompleteMenu AutocompleteMenu { get; set; }
+
+        public bool SyntaxHighlighting
+        {
+            get { return _syntaxHighlight; }
+            set { _syntaxHighlight = value; UpdateTextStyles(); }
+        }
+        private bool _syntaxHighlight = true;
+
         public void SetAutocomplete(string[] autocomplete)
         {
             if (autocomplete != null)
@@ -85,17 +94,37 @@ namespace Sm4shCommand
             this.TextChanged += NewBox_TextChanged;
             this.AutoCompleteBrackets = true;
             this.AutoIndent = true;
+            this.ChangedLineColor = Color.Yellow;
         }
+        public void UpdateTextStyles()
+        {
+            UpdateTextStyles(this.Range);
+        }
+        public void UpdateTextStyles(Range changedRange)
+        {
+            if (SyntaxHighlighting)
+            {
+                //clear previous highlighting
+                changedRange.ClearStyle(StyleIndex.All);
+
+                //highlight tags
+                changedRange.SetStyle(CommentStyle, @"(\/\/.*?$|\/\*.*?\*\/)");
+                changedRange.SetStyle(KeywordStyle, @"\b(if|else|try|catch|MoveDef|Unlisted)\b");
+                changedRange.SetStyle(KeywordStyle, @"([a-zA-Z])+(?==)");
+                changedRange.SetStyle(HexStyle, @"0x[^\)\s,\r\n]+");
+                changedRange.SetStyle(DecStyle, @"\b(?:[0-9]*\\.)?[0-9]+\b");
+                changedRange.SetStyle(StrStyle, "\"(\\.|[^\"])*\"");
+            }
+            else
+            {
+                //clear previous highlighting
+                changedRange.ClearStyle(StyleIndex.All);
+            }
+        }
+
         private void NewBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //clear previous highlighting
-            e.ChangedRange.ClearStyle(StyleIndex.All);
-            //highlight tags
-            e.ChangedRange.SetStyle(CommentStyle, @"(\/\/.*?$|\/\*.*?\*\/)");
-            e.ChangedRange.SetStyle(keywordStyle, @"\b(if|else|try|catch|MoveDef|Unlisted)\b");
-            e.ChangedRange.SetStyle(HexStyle, @"0x[^\)\s,\r\n]+");
-            e.ChangedRange.SetStyle(DecStyle, @"\b(?:[0-9]*\\.)?[0-9]+\b");
-            e.ChangedRange.SetStyle(StrStyle, "\"(\\.|[^\"])*\"");
+            UpdateTextStyles(e.ChangedRange);
         }
     }
 }

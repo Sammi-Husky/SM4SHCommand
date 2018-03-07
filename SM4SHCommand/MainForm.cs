@@ -81,7 +81,7 @@ namespace Sm4shCommand
 
             Explorer = new WorkspaceExplorer();
             AddDockedControl(Explorer, DockState.DockRight);
-            AddDockedControl(new CodeEditor() { TabText = "Editor" }, DockState.Document);
+            AddDockedControl(new TextEditor() { TabText = "Editor" }, DockState.Document);
             WorkspaceManager = new WorkspaceManager(Explorer);
 
             if (!string.IsNullOrEmpty(OpenTarget))
@@ -136,6 +136,11 @@ namespace Sm4shCommand
         private void RecentFilesStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
            OpenFile(((RecentFileHandler.FileMenuItem)e.ClickedItem).FileName);
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ((EditorBase)dockPanel1.ActiveContent).Save();
         }
     }
 }

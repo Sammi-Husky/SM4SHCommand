@@ -23,7 +23,7 @@ namespace Sm4shCommand.GUI.Nodes
                 item.ToolTipText = desc;
                 items.Add(item);
             }
-            var editor = new CodeEditor(this) { Text = this.Text };
+            var editor = new TextEditor(this) { Text = this.Text };
             editor.SetAutocomplete(items.ToArray());
             return editor;
         }

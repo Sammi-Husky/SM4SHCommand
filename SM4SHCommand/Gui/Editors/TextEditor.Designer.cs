@@ -1,6 +1,6 @@
 ﻿namespace Sm4shCommand.GUI.Editors
 {
-    partial class CodeEditor
+    partial class TextEditor
     {
         /// <summary> 
         /// Required designer variable.
@@ -14,7 +14,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CodeEditor));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TextEditor));
             this.ITS_EDITOR1 = new Sm4shCommand.ITS_EDITOR();
             ((System.ComponentModel.ISupportInitialize)(this.ITS_EDITOR1)).BeginInit();
             this.SuspendLayout();

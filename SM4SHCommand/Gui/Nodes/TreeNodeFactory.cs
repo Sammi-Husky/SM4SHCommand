@@ -11,10 +11,11 @@ namespace Sm4shCommand.GUI.Nodes
         public static Dictionary<string, Func<ProjectExplorerNode>> SupportedFiles = new Dictionary<string, Func<ProjectExplorerNode>>()
         {
             {".acm",        () => new ACMDSourceNode()  },
-            {".txt",        () => new ProjectFileNode() },
+            {".txt",        () => new GenericTextNode() },
             {".png",        () => new ProjectFileNode() },
             {".fitproj",    () => new ProjectNode()     },
-            {".wrkspc",     () => new WorkspaceNode()   }
+            {".wrkspc",     () => new WorkspaceNode()   },
+            {".mlist",      () => new GenericTextNode() },
         };
         public static ProjectExplorerNode NodeFromExtension(string extension)
         {

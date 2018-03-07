@@ -33,7 +33,7 @@ namespace Sm4shCommand.GUI
         {
             get
             {
-                if(lstProjTemplate.SelectedIndices.Count > 0)
+                if (lstProjTemplate.SelectedIndices.Count > 0)
                 {
                     return (IProjectTemplate)lstProjTemplate.Items[lstProjTemplate.SelectedIndices[0]].Tag;
                 }
@@ -53,7 +53,8 @@ namespace Sm4shCommand.GUI
         private void NewProjectDialog_Load(object sender, EventArgs e)
         {
             Manager = MainForm.Instance.WorkspaceManager;
-            txtName.Text = txtWorkspace.Text = "NewProject";
+            txtName.Text = "NewProject";
+            txtWorkspace.Text = "NewWorkspace";
 
             if (Manager.TargetWorkspace != null)
             {
@@ -93,7 +94,15 @@ namespace Sm4shCommand.GUI
 
                 if (SelectedTemplate != null)
                 {
-                    Manager.AddProject(SelectedTemplate.CreateProject(Path.Combine(WorkspacePath, txtName.Text, txtName.Text + ".fitproj"), txtName.Text, Manager));
+                    Project p = SelectedTemplate.CreateProject(Path.Combine(WorkspacePath, txtName.Text, txtName.Text + ".fitproj"), txtName.Text, Manager);
+                    if (p != null)
+                    {
+                        Manager.AddProject(p);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error creating project", "Error");
+                    }
                 }
             }
             else

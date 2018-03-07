@@ -8,25 +8,30 @@ using FastColoredTextBoxNS;
 
 namespace Sm4shCommand.GUI.Editors
 {
-    public partial class CodeEditor : EditorBase
+    public partial class TextEditor : EditorBase
     {
-        public CodeEditor()
+        public TextEditor()
         {
             InitializeComponent();
-            this.ITS_EDITOR1.TextChanged += ITS_EDITOR1_TextChanged;
         }
 
         private FileInfo TargetFile { get; set; }
-        private void ITS_EDITOR1_TextChanged(object sender, FastColoredTextBoxNS.TextChangedEventArgs e)
+        public bool SyntaxHighlighting
         {
-            if (!HasChanges)
+            get { return ITS_EDITOR1.SyntaxHighlighting; }
+            set { ITS_EDITOR1.SyntaxHighlighting = value;}
+        }
+
+        private void ITS_EDITOR1_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (ITS_EDITOR1.IsChanged && HasChanges == false)
             {
                 HasChanges = true;
                 this.Text += "*";
             }
         }
 
-        public CodeEditor(ProjectExplorerNode node) : this()
+        public TextEditor(ProjectExplorerNode node) : this()
         {
             LinkedNode = node;
             TargetFile = (FileInfo)node.Tag;
@@ -34,6 +39,10 @@ namespace Sm4shCommand.GUI.Editors
             {
                 this.ITS_EDITOR1.Text = reader.ReadToEnd();
             }
+
+            // dont count setting text as changed
+            ITS_EDITOR1.IsChanged = false;
+            this.ITS_EDITOR1.TextChanged += ITS_EDITOR1_TextChanged;
         }
 
         public void SetAutocomplete(string[] autocomplete)
@@ -66,13 +75,17 @@ namespace Sm4shCommand.GUI.Editors
             {
                 using (StreamWriter writer = File.CreateText(filename))
                 {
-                    writer.Write(this.Text);
+                    writer.Write(this.ITS_EDITOR1.Text);
                 }
 
-                if (this.Text.EndsWith("*"))
+                if (this.Text.EndsWith("*") || this.HasChanges)
+                {
                     this.Text = this.Text.Remove(this.Text.Length - 1);
+                    HasChanges = false;
+                }
 
                 return false;
+
             }
             catch (Exception e)
             {
