@@ -135,12 +135,25 @@ namespace Sm4shCommand
         }
         private void RecentFilesStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-           OpenFile(((RecentFileHandler.FileMenuItem)e.ClickedItem).FileName);
+            OpenFile(((RecentFileHandler.FileMenuItem)e.ClickedItem).FileName);
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((EditorBase)dockPanel1.ActiveContent).Save();
+            if (dockPanel1.ActiveContent != null)
+                ((EditorBase)dockPanel1.ActiveContent).Save();
+        }
+
+        private void projOpen_Click(object sender, EventArgs e)
+        {
+            ofDlg.Filter = "All Project files (*.fitproj, *.wrkspc)|*.fitproj; *.wrkspc|"+
+                              "Fighter Project (*.fitproj)|*.fitproj|" +
+                              "Project Workspace (*.wrkspc)|*.wrkspc|" +
+                              "All Files (*.*)|*.*";
+            if (ofDlg.ShowDialog() == DialogResult.OK)
+            {
+                OpenFile(ofDlg.FileName);
+            }
         }
     }
 }
