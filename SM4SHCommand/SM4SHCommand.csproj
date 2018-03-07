@@ -189,6 +189,7 @@
     <PostBuildEvent>copy $(SolutionDir)lib\FITX\FITC\bin\$(ConfigurationName)\FITC.exe $(TargetDir)lib
 copy $(SolutionDir)lib\FITX\FITD\bin\$(ConfigurationName)\FITD.exe $(TargetDir)lib
 move $(TargetDir)SALT.dll $(TargetDir)lib
+mkdir  $(TargetDir)ProjectTemplates
 del $(TargetDir)*.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

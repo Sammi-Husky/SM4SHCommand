@@ -14,7 +14,7 @@ namespace Sm4shCommand
             StartupDirectory = AppDomain.CurrentDomain.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
             MyDocumentsDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SM4SHCommand");
             DefaultProjectDirectory = Path.Combine(MyDocumentsDirectory, "Projects");
-
+            ProjectTemplatesDirectory = Path.Combine(StartupDirectory, "ProjectTemplates");
             var types = new List<IProjectTemplate>();
             foreach (Type t in Assembly.GetExecutingAssembly().GetTypes())
             {
@@ -23,25 +23,30 @@ namespace Sm4shCommand
                     types.Add((IProjectTemplate)Activator.CreateInstance(t));
                 }
             }
-            foreach (var path in Directory.EnumerateFiles(Path.Combine(StartupDirectory, "ProjectTemplates")))
+            if (Directory.Exists(ProjectTemplatesDirectory))
             {
-                if (!path.EndsWith(".dll"))
-                    break;
-
-                Assembly a = Assembly.LoadFile(path);
-                foreach (var t in a.GetTypes())
+                foreach (var path in Directory.EnumerateFiles(ProjectTemplatesDirectory))
                 {
-                    if (t.GetInterfaces().Contains(typeof(IProjectTemplate)))
+                    if (!path.EndsWith(".dll"))
+                        break;
+
+                    Assembly a = Assembly.LoadFile(path);
+                    foreach (var t in a.GetTypes())
                     {
-                        types.Add((IProjectTemplate)Activator.CreateInstance(t));
+                        if (t.GetInterfaces().Contains(typeof(IProjectTemplate)))
+                        {
+                            types.Add((IProjectTemplate)Activator.CreateInstance(t));
+                        }
                     }
                 }
+                ProjectTemplates = types.ToArray();
             }
-            ProjectTemplates = types.ToArray();
+
         }
         internal static readonly string StartupDirectory;
         internal static readonly string DefaultProjectDirectory;
         internal static readonly string MyDocumentsDirectory;
+        internal static readonly string ProjectTemplatesDirectory;
         internal static IProjectTemplate[] ProjectTemplates { get; set; }
     }
 }
