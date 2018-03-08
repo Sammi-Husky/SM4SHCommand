@@ -19,7 +19,7 @@ namespace Sm4shCommand.GUI
         }
 
         private WorkspaceManager Manager { get; set; }
-        private string WorkspacePath
+        public string WorkspacePath
         {
             get
             {
@@ -29,7 +29,23 @@ namespace Sm4shCommand.GUI
                     return Manager.TargetWorkspace.WorkspaceRoot;
             }
         }
-        private IProjectTemplate SelectedTemplate
+        public string WorkspaceFilePath
+        {
+            get
+            {
+                return Path.Combine(WorkspacePath, txtWorkspace.Text + ".wrkspc");
+            }
+        }
+        public string ProjectFilePath
+        {
+            get
+            {
+                return Path.Combine(WorkspacePath, txtName.Text, txtName.Text + ".fitproj");
+            }
+        }
+        public string ProjectName { get { return txtName.Text; } }
+
+        public IProjectTemplate SelectedTemplate
         {
             get
             {
@@ -43,12 +59,14 @@ namespace Sm4shCommand.GUI
                 }
             }
         }
-
-        private void button4_Click(object sender, EventArgs e)
+        public bool CreateWorkspace
         {
-            DialogResult = DialogResult.Cancel;
-            this.Close();
+            get
+            {
+                return txtWorkspace.Enabled && Manager.TargetWorkspace == null;
+            }
         }
+
 
         private void NewProjectDialog_Load(object sender, EventArgs e)
         {
@@ -80,38 +98,6 @@ namespace Sm4shCommand.GUI
         private void txtName_TextChanged(object sender, EventArgs e)
         {
 
-        }
-
-        private void btnOkay_Click(object sender, EventArgs e)
-        {
-            if (!Directory.Exists(Path.Combine(WorkspacePath, txtName.Text)))
-            {
-                Directory.CreateDirectory(Path.Combine(WorkspacePath, txtName.Text));
-                if (txtWorkspace.Enabled && Manager.TargetWorkspace == null)
-                {
-                    Manager.CreateNewWorkspace(Path.Combine(WorkspacePath, txtWorkspace.Text + ".wrkspc"));
-                }
-
-                if (SelectedTemplate != null)
-                {
-                    Project p = SelectedTemplate.CreateProject(Path.Combine(WorkspacePath, txtName.Text, txtName.Text + ".fitproj"), txtName.Text, Manager);
-                    if (p != null)
-                    {
-                        Manager.AddProject(p);
-                    }
-                    else
-                    {
-                        MessageBox.Show("Error creating project", "Error");
-                    }
-                }
-            }
-            else
-            {
-                MessageBox.Show("An existing project with this name already exists at this location!");
-                return;
-            }
-            this.DialogResult = DialogResult.OK;
-            this.Close();
         }
 
         private void InitializeProjectTemplates()

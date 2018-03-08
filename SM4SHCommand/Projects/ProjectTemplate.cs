@@ -100,6 +100,10 @@ namespace Sm4shCommand
                         }
                     }
                 }
+                else
+                {
+                    return null;
+                }
             }
             return p;
         }

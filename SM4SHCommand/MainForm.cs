@@ -90,8 +90,31 @@ namespace Sm4shCommand
 
         private void ProjectToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            NewProjectDialog dlg = new NewProjectDialog();
-            dlg.ShowDialog();
+            using (var dlg = new NewProjectDialog())
+            {
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    if (dlg.SelectedTemplate != null)
+                    {
+                        Project p = dlg.SelectedTemplate.CreateProject(dlg.ProjectFilePath, dlg.ProjectName, WorkspaceManager);
+                        if (p != null)
+                        {
+                            if (!Directory.Exists(Path.Combine(dlg.WorkspacePath, dlg.Name)) && dlg.CreateWorkspace)
+                            {
+                                Directory.CreateDirectory(Path.Combine(dlg.WorkspacePath, dlg.Name));
+                                WorkspaceManager.CreateNewWorkspace(dlg.WorkspaceFilePath);
+                            }
+                            WorkspaceManager.AddProject(p);
+                        }
+                    }
+
+                    else
+                    {
+                        MessageBox.Show("An existing project with this name already exists at this location!");
+                        return;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -146,7 +169,7 @@ namespace Sm4shCommand
 
         private void projOpen_Click(object sender, EventArgs e)
         {
-            ofDlg.Filter = "All Project files (*.fitproj, *.wrkspc)|*.fitproj; *.wrkspc|"+
+            ofDlg.Filter = "All Project files (*.fitproj, *.wrkspc)|*.fitproj; *.wrkspc|" +
                               "Fighter Project (*.fitproj)|*.fitproj|" +
                               "Project Workspace (*.wrkspc)|*.wrkspc|" +
                               "All Files (*.*)|*.*";
