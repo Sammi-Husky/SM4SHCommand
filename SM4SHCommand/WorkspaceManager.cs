@@ -25,6 +25,9 @@ namespace Sm4shCommand
         public Workspace TargetWorkspace { get; private set; }
         private WorkspaceExplorer Tree { get; set; }
 
+        public event EventHandler<WorkspaceOpenedEventArgs> OnWorkspaceOpened;
+        public event EventHandler<ProjectOpenedEventArgs> OnProjectOpened;
+
         public void CreateNewWorkspace(string filename)
         {
             if (TargetWorkspace != null)
@@ -41,7 +44,6 @@ namespace Sm4shCommand
             TargetWorkspace.SaveWorkspace(filename);
             OpenWorkspace(filename);
         }
-
         public void OpenWorkspace(string filepath)
         {
             TargetWorkspace = new Workspace
@@ -64,6 +66,10 @@ namespace Sm4shCommand
                 proj.ProjectGuid = Guid.Parse(node.Attributes["GUID"].Value);
                 TargetWorkspace.Projects.Add(proj.ProjectGuid, proj);
             }
+
+            // Raise OnWorkspaceOpened event
+            OnWorkspaceOpened?.Invoke(this, new WorkspaceOpenedEventArgs(TargetWorkspace));
+
             PopulateTreeView();
         }
         public DialogResult CloseWorkspace()
@@ -79,7 +85,6 @@ namespace Sm4shCommand
             }
             return result;
         }
-
         public void SaveWorkspace()
         {
             TargetWorkspace.SaveWorkspace();
@@ -123,12 +128,15 @@ namespace Sm4shCommand
             TargetWorkspace.SaveWorkspace();
             Tree.treeView1.Nodes[0].Nodes.Add(PopulateProjectNode(p));
         }
-
         public void OpenProject(string filename)
         {
             Util.LogMessage($"Opening project {filename}..");
             var p = ReadProjectFile(filename);
             TargetWorkspace.Projects.Add(p.ProjectGuid, p);
+
+            // Raise OnProjectAdded event
+            OnProjectOpened?.Invoke(this, new ProjectOpenedEventArgs(p));
+
             PopulateTreeView();
         }
         private Project ReadProjectFile(string filepath)
@@ -290,5 +298,22 @@ namespace Sm4shCommand
                 return false;
             }
         }
+    }
+
+    public class ProjectOpenedEventArgs : EventArgs
+    {
+        public ProjectOpenedEventArgs(Project project)
+        {
+            OpenedProject = project;
+        }
+        public Project OpenedProject { get; private set; }
+    }
+    public class WorkspaceOpenedEventArgs : EventArgs
+    {
+        public WorkspaceOpenedEventArgs(Workspace workspace)
+        {
+            OpenedWorkspace = workspace;
+        }
+        public Workspace OpenedWorkspace { get; private set; }
     }
 }
