@@ -99,9 +99,9 @@ namespace Sm4shCommand
                         Project p = dlg.SelectedTemplate.CreateProject(dlg.ProjectFilePath, dlg.ProjectName, WorkspaceManager);
                         if (p != null)
                         {
-                            if (!Directory.Exists(Path.Combine(dlg.WorkspacePath, dlg.Name)) && dlg.CreateWorkspace)
+                            if (!Directory.Exists(Path.Combine(dlg.WorkspacePath, dlg.WorkspaceName)) && dlg.CreateWorkspace)
                             {
-                                Directory.CreateDirectory(Path.Combine(dlg.WorkspacePath, dlg.Name));
+                                Directory.CreateDirectory(Path.Combine(dlg.WorkspacePath, dlg.ProjectName));
                                 WorkspaceManager.CreateNewWorkspace(dlg.WorkspaceFilePath);
                             }
                             WorkspaceManager.AddProject(p);

@@ -19,12 +19,19 @@ namespace Sm4shCommand.GUI
         }
 
         private WorkspaceManager Manager { get; set; }
+        public string WorkspaceName
+        {
+            get
+            {
+                return txtWorkspace.Text;
+            }
+        }
         public string WorkspacePath
         {
             get
             {
                 if (txtWorkspace.Enabled)
-                    return Path.Combine(txtLocation.Text.TrimEnd(Path.DirectorySeparatorChar), txtWorkspace.Text);
+                    return Path.Combine(txtLocation.Text.TrimEnd(Path.DirectorySeparatorChar), WorkspaceName);
                 else
                     return Manager.TargetWorkspace.WorkspaceRoot;
             }
@@ -40,7 +47,7 @@ namespace Sm4shCommand.GUI
         {
             get
             {
-                return Path.Combine(WorkspacePath, txtName.Text, txtName.Text + ".fitproj");
+                return Path.Combine(WorkspacePath, ProjectName, ProjectName + ".fitproj");
             }
         }
         public string ProjectName { get { return txtName.Text; } }
