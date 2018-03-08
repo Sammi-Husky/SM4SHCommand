@@ -11,6 +11,7 @@ using SALT.PARAMS;
 using Sm4shCommand.GUI;
 using Sm4shCommand.GUI.Nodes;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Sm4shCommand
 {
@@ -243,6 +244,51 @@ namespace Sm4shCommand
 
             Tree.treeView1.Nodes[0].Expand();
             Tree.treeView1.EndUpdate();
+        }
+
+        /// <summary>
+        /// Decompiles a fighter with FITX to the specified output directory 
+        /// </summary>
+        /// <param name="fighterFolder"></param>
+        /// <param name="output"></param>
+        /// <returns>returns true on success, false otherwise</returns>
+        public bool DecompileFighter(string fighterFolder, string output)
+        {
+            try
+            {
+                using (var fitd = new FITDDialog(fighterFolder, output))
+                {
+                    if (fitd.ShowDialog() == DialogResult.Cancel)
+                        return false;
+
+                    ProcessStartInfo start = new ProcessStartInfo
+                    {
+                        Arguments = fitd.CommandLineArgs,
+                        FileName = Util.CanonicalizePath(Path.Combine(GLOBALS.StartupDirectory, "lib/FITD.exe")),
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                    };
+
+                    Util.LogMessage("Decompiling with FITD..", ConsoleColor.Green);
+                    using (var proc = Process.Start(start))
+                    {
+                        while (!proc.HasExited)
+                        {
+                            while (!proc.StandardOutput.EndOfStream)
+                            {
+                                Util.LogMessage(proc.StandardOutput.ReadLine(), ConsoleColor.Blue);
+                            }
+                        }
+                        Util.LogMessage($"FITD has exited with code {proc.ExitCode}", ConsoleColor.Green);
+                    }
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return false;
+            }
         }
     }
 }

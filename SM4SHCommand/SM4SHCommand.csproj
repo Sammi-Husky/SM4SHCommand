@@ -83,6 +83,12 @@
     <Compile Include="GUI\Editors\EditorBase.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="GUI\FITDDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\FITDDialog.Designer.cs">
+      <DependentUpon>FITDDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\NewProjectDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -134,6 +140,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\Editors\TextEditor.resx">
       <DependentUpon>TextEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\FITDDialog.resx">
+      <DependentUpon>FITDDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\NewProjectDialog.resx">
       <DependentUpon>NewProjectDialog.cs</DependentUpon>

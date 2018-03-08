@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sm4shCommand.GUI;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -87,62 +88,22 @@ namespace Sm4shCommand
                 GameVer = "1.1.7",
                 ProjectGuid = Guid.NewGuid()
             };
-
             using (var fsd = new FolderSelectDialog())
             {
                 if (fsd.ShowDialog() == DialogResult.OK)
                 {
-                    try
+                    if (manager.DecompileFighter(fsd.SelectedPath, Path.Combine(p.ProjDirectory, "Moveset")))
                     {
-                        DecompileFighter(fsd.SelectedPath, Path.Combine(p.ProjDirectory, "Moveset"));
                         foreach (var file in Directory.EnumerateFiles(Path.Combine(p.ProjDirectory, "Moveset"), "*.*", SearchOption.AllDirectories))
                         {
                             p.AddFile(file, false);
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.Message);
-                        return null;
                     }
                 }
             }
             return p;
         }
 
-        private void DecompileFighter(string fighterFolder, string output)
-        {
-            string mtable = Util.CanonicalizePath(Path.Combine(fighterFolder, "script/animcmd/body/motion.mtable"));
-            string motionFolder = Util.CanonicalizePath(Path.Combine(fighterFolder, "motion"));
 
-            if (File.Exists(mtable))
-            {
-                string args = $"\"{mtable}\" -o \"{output}\"";
-
-                if (Directory.Exists(motionFolder))
-                    args += $" -m \"{motionFolder}\"";
-
-                ProcessStartInfo start = new ProcessStartInfo
-                {
-                    Arguments = args,
-                    FileName = Util.CanonicalizePath(Path.Combine(GLOBALS.StartupDirectory, "lib/FITD.exe")),
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                };
-
-                Util.LogMessage("Decompiling with FITD..", ConsoleColor.Green);
-                using (var proc = Process.Start(start))
-                {
-                    while (!proc.HasExited)
-                    {
-                        while (!proc.StandardOutput.EndOfStream)
-                        {
-                            Util.LogMessage(proc.StandardOutput.ReadLine(), ConsoleColor.Blue);
-                        }
-                    }
-                    Util.LogMessage($"FITD has exited with code {proc.ExitCode}", ConsoleColor.Green);
-                }
-            }
-        }
     }
 }
