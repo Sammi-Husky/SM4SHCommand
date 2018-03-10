@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using SALT.Moveset;
-using SALT.Moveset.AnimCMD;
-using SALT.Moveset.MSC;
 using System.Xml;
 using System.Linq;
-using SALT.PARAMS;
 using Sm4shCommand.GUI;
 using Sm4shCommand.GUI.Nodes;
 using System.ComponentModel;
@@ -27,6 +23,7 @@ namespace Sm4shCommand
 
         public event EventHandler<WorkspaceOpenedEventArgs> OnWorkspaceOpened;
         public event EventHandler<ProjectOpenedEventArgs> OnProjectOpened;
+        public event EventHandler<ProjectAddedEventArgs> OnProjectAdded;
 
         public void CreateNewWorkspace(string filename)
         {
@@ -46,6 +43,11 @@ namespace Sm4shCommand
         }
         public void OpenWorkspace(string filepath)
         {
+            if(TargetWorkspace != null && CloseWorkspace() == DialogResult.Cancel)
+            {
+                return;
+            }
+
             TargetWorkspace = new Workspace
             {
                 WorkspaceFile = new XmlDocument(),
@@ -126,12 +128,24 @@ namespace Sm4shCommand
             element.Attributes.Append(guidAttr);
             element.Attributes.Append(pathAttr);
             TargetWorkspace.SaveWorkspace();
+
+            // Raise OnWorkspaceOpened event
+            OnProjectAdded?.Invoke(this, new ProjectAddedEventArgs(p));
+
             Tree.treeView1.Nodes[0].Nodes.Add(PopulateProjectNode(p));
         }
         public void OpenProject(string filename)
         {
             Util.LogMessage($"Opening project {filename}..");
             var p = ReadProjectFile(filename);
+
+            // TODO 
+            // allow opening single projects instead of only workspaces
+            if (TargetWorkspace.Projects.ContainsKey(p.ProjectGuid))
+            {
+                Util.LogMessage($"Project {p.ProjName} is already open!", ConsoleColor.Red);
+                return;
+            }
             TargetWorkspace.Projects.Add(p.ProjectGuid, p);
 
             // Raise OnProjectAdded event
@@ -275,6 +289,7 @@ namespace Sm4shCommand
                         FileName = Util.CanonicalizePath(Path.Combine(GLOBALS.StartupDirectory, "lib/FITD.exe")),
                         UseShellExecute = false,
                         RedirectStandardOutput = true,
+                        CreateNoWindow = true
                     };
 
                     Util.LogMessage("Decompiling with FITD..", ConsoleColor.Green);
@@ -295,9 +310,57 @@ namespace Sm4shCommand
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
+                Util.LogMessage(e.Message, ConsoleColor.Red);
                 return false;
             }
         }
+
+        /// <summary>
+        /// Compiles a fighter using FITC to the specified output directory
+        /// </summary>
+        /// <param name="mlist"></param>
+        /// <param name="platform"></param>
+        /// <param name="output"></param>
+        /// <returns>Returns true on success, false otherwise</returns>
+        public bool CompileFighter(string mlist, ProjPlatform platform, string output)
+        {
+            try
+            {
+                string args = $"\"{mlist}\" -o \"{output}\"";
+                if (platform == ProjPlatform.ThreeDS)
+                    args += " -le";
+
+                ProcessStartInfo start = new ProcessStartInfo
+                {
+                    Arguments = args,
+                    FileName = Util.CanonicalizePath(Path.Combine(GLOBALS.StartupDirectory, "lib/FITC.exe")),
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                };
+
+                Util.LogMessage("Compiling with FITC..", ConsoleColor.Green);
+                using (var proc = Process.Start(start))
+                {
+                    while (!proc.HasExited)
+                    {
+                        while (!proc.StandardOutput.EndOfStream)
+                        {
+                            Util.LogMessage(proc.StandardOutput.ReadLine(), ConsoleColor.Blue);
+                        }
+                    }
+                    Util.LogMessage($"FITC has exited with code {proc.ExitCode}", ConsoleColor.Green);
+                }
+                return true;
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+                Util.LogMessage(e.Message, ConsoleColor.Red);
+                return false;
+            }
+        }
+
     }
 
     public class ProjectOpenedEventArgs : EventArgs
@@ -308,6 +371,14 @@ namespace Sm4shCommand
         }
         public Project OpenedProject { get; private set; }
     }
+    public class ProjectAddedEventArgs : EventArgs
+    {
+        public ProjectAddedEventArgs(Project project)
+        {
+            AddedProject = project;
+        }
+        public Project AddedProject { get; private set; }
+    }
     public class WorkspaceOpenedEventArgs : EventArgs
     {
         public WorkspaceOpenedEventArgs(Workspace workspace)
@@ -316,4 +387,5 @@ namespace Sm4shCommand
         }
         public Workspace OpenedWorkspace { get; private set; }
     }
+
 }

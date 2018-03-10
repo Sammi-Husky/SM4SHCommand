@@ -1,10 +1,8 @@
 ﻿using FastColoredTextBoxNS;
-using SALT.Moveset.AnimCMD;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using SALT.Moveset;
 using System.IO;
 
 namespace Sm4shCommand

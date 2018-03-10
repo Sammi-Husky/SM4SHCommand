@@ -43,10 +43,22 @@ namespace Sm4shCommand
             }
 
         }
+
+
         internal static readonly string StartupDirectory;
         internal static readonly string DefaultProjectDirectory;
         internal static readonly string MyDocumentsDirectory;
         internal static readonly string ProjectTemplatesDirectory;
+
         internal static IProjectTemplate[] ProjectTemplates { get; set; }
+    }
+
+    public static class FIGHTER_GLOBALS
+    {
+        public static string ACMD_DIR { get { return "script/animcmd"; } }
+        public static string MSC_DIR { get { return "script/msc"; } }
+        public static string AI_DIR { get { return "script/ai"; } }
+
+        public static string MOTION_DIR { get { return "motion"; } }
     }
 }

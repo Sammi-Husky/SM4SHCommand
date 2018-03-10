@@ -73,11 +73,13 @@
             this.copyToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.pasteToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripComboBox2 = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.cboProject = new System.Windows.Forms.ToolStripComboBox();
+            this.btnBuild = new System.Windows.Forms.ToolStripButton();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.buildWorkspaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rebuildWorkspaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cleanWorkspaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -316,6 +318,10 @@
             // 
             // projectToolStripMenuItem2
             // 
+            this.projectToolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.buildWorkspaceToolStripMenuItem,
+            this.rebuildWorkspaceToolStripMenuItem,
+            this.cleanWorkspaceToolStripMenuItem});
             this.projectToolStripMenuItem2.Name = "projectToolStripMenuItem2";
             this.projectToolStripMenuItem2.Size = new System.Drawing.Size(46, 20);
             this.projectToolStripMenuItem2.Text = "Build";
@@ -371,9 +377,8 @@
             this.copyToolStripButton,
             this.pasteToolStripButton,
             this.toolStripSeparator7,
-            this.toolStripComboBox1,
-            this.toolStripComboBox2,
-            this.toolStripButton1});
+            this.cboProject,
+            this.btnBuild});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(10, 0, 1, 0);
@@ -446,31 +451,20 @@
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             this.toolStripSeparator7.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripComboBox1
+            // cboProject
             // 
-            this.toolStripComboBox1.AutoCompleteCustomSource.AddRange(new string[] {
-            "Wii U",
-            "3DS"});
-            this.toolStripComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox1.Items.AddRange(new object[] {
-            "Wii U",
-            "3DS"});
-            this.toolStripComboBox1.Name = "toolStripComboBox1";
-            this.toolStripComboBox1.Size = new System.Drawing.Size(121, 25);
+            this.cboProject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboProject.Name = "cboProject";
+            this.cboProject.Size = new System.Drawing.Size(121, 25);
             // 
-            // toolStripComboBox2
+            // btnBuild
             // 
-            this.toolStripComboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.toolStripComboBox2.Name = "toolStripComboBox2";
-            this.toolStripComboBox2.Size = new System.Drawing.Size(121, 25);
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.Image = global::Sm4shCommand.Properties.Resources.play;
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(54, 22);
-            this.toolStripButton1.Text = "Build";
+            this.btnBuild.Image = global::Sm4shCommand.Properties.Resources.play;
+            this.btnBuild.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnBuild.Name = "btnBuild";
+            this.btnBuild.Size = new System.Drawing.Size(54, 22);
+            this.btnBuild.Text = "Build";
+            this.btnBuild.Click += new System.EventHandler(this.btnBuild_Click);
             // 
             // splitter2
             // 
@@ -489,6 +483,25 @@
             this.dockPanel1.Name = "dockPanel1";
             this.dockPanel1.Size = new System.Drawing.Size(841, 409);
             this.dockPanel1.TabIndex = 16;
+            // 
+            // buildWorkspaceToolStripMenuItem
+            // 
+            this.buildWorkspaceToolStripMenuItem.Name = "buildWorkspaceToolStripMenuItem";
+            this.buildWorkspaceToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.buildWorkspaceToolStripMenuItem.Text = "Build Workspace";
+            this.buildWorkspaceToolStripMenuItem.Click += new System.EventHandler(this.buildWorkspaceToolStripMenuItem_Click);
+            // 
+            // rebuildWorkspaceToolStripMenuItem
+            // 
+            this.rebuildWorkspaceToolStripMenuItem.Name = "rebuildWorkspaceToolStripMenuItem";
+            this.rebuildWorkspaceToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.rebuildWorkspaceToolStripMenuItem.Text = "Rebuild Workspace";
+            // 
+            // cleanWorkspaceToolStripMenuItem
+            // 
+            this.cleanWorkspaceToolStripMenuItem.Name = "cleanWorkspaceToolStripMenuItem";
+            this.cleanWorkspaceToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.cleanWorkspaceToolStripMenuItem.Text = "Clean Workspace";
             // 
             // MainForm
             // 
@@ -559,9 +572,8 @@
         private System.Windows.Forms.ToolStripButton copyToolStripButton;
         private System.Windows.Forms.ToolStripButton pasteToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
-        private System.Windows.Forms.ToolStripComboBox toolStripComboBox2;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripComboBox cboProject;
+        private System.Windows.Forms.ToolStripButton btnBuild;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem projectFromExistingCodeToolStripMenuItem;
@@ -574,6 +586,9 @@
         private System.Windows.Forms.ToolStripMenuItem closeWorkspaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem recentFilesStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem buildWorkspaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rebuildWorkspaceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cleanWorkspaceToolStripMenuItem;
     }
 }
 

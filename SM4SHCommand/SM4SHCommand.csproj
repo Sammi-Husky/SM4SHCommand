@@ -188,8 +188,8 @@
     <Folder Include="ProjectTemplates\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\lib\SALT\SALT\SALT.csproj">
-      <Project>{90cbd9ab-41e3-4868-9632-f894f5bf5b26}</Project>
+    <ProjectReference Include="..\lib\FITX\SALT\SALT\SALT.csproj">
+      <Project>{6038e0a4-4140-43c6-bcaa-1344a7cacdb2}</Project>
       <Name>SALT</Name>
     </ProjectReference>
   </ItemGroup>

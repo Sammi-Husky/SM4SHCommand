@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using SALT.Moveset;
-using SALT.Moveset.AnimCMD;
-using SALT.Moveset.MSC;
 using System.Xml;
-using SALT.PARAMS;
 using Sm4shCommand.GUI;
 using Sm4shCommand.GUI.Nodes;
 using System.ComponentModel;
@@ -138,6 +134,11 @@ namespace Sm4shCommand
         public virtual void SaveProject()
         {
             SaveProject(ProjFilepath);
+        }
+
+        public override string ToString()
+        {
+            return ProjName;
         }
     }
     public class FitProj : Project

@@ -5,11 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Windows.Forms;
-using SALT.PARAMS;
-using SALT.Moveset;
-using SALT.Moveset.AnimCMD;
 using System.ComponentModel;
-using SALT.Moveset.MSC;
 using WeifenLuo.WinFormsUI.Docking;
 using Sm4shCommand.GUI.Editors;
 using System.Reflection;
@@ -44,7 +40,7 @@ namespace Sm4shCommand
             recentFilesStripMenuItem.DropDownItemClicked += RecentFilesStripMenuItem_DropDownItemClicked;
         }
 
-        public const string FileFilter = 
+        public const string FileFilter =
                               "All Supported Files (*.acm, *.fitproj, *.wrkspc)|*.bin;*.fitproj;*.wrkspc|" +
                               "ACMD Script (*.acm)|*.acm|" +
                               "Fighter Project (*.fitproj)|*.fitproj|" +
@@ -63,7 +59,7 @@ namespace Sm4shCommand
         /// </summary>
         /// <param name="filename">Path to the file.</param>
         /// <returns>Returns true if successful</returns>
-        private bool OpenFile(string filename)
+        internal bool OpenFile(string filename)
         {
             try
             {
@@ -81,11 +77,11 @@ namespace Sm4shCommand
             }
             catch (Exception x)
             {
-                Util.LogMessage($"Error opening file {filename}: {x.Message}");
+                Util.LogMessage($"Error opening file {filename}: {x.Message}", ConsoleColor.Red);
             }
             return false;
         }
-        public void AddDockedControl(DockContent content, DockState dock)
+        internal void AddDockedControl(DockContent content, DockState dock)
         {
             content.ShowHint = dock;
             if (dockPanel1.DocumentStyle == DocumentStyle.SystemMdi)
@@ -95,6 +91,10 @@ namespace Sm4shCommand
             }
             else
                 content.Show(dockPanel1);
+        }
+        internal void AddDockedControl(DockContent control, DockPane parent, DockAlignment alignment, double split)
+        {
+            control.Show(parent, alignment, split);
         }
 
         //===================================================//
@@ -162,18 +162,29 @@ namespace Sm4shCommand
 
             Explorer = new WorkspaceExplorer();
             AddDockedControl(Explorer, DockState.DockRight);
-            AddDockedControl(new TextEditor() { TabText = "Editor" }, DockState.Document);
             WorkspaceManager = new WorkspaceManager(Explorer);
             WorkspaceManager.OnWorkspaceOpened += WorkspaceManager_OnWorkspaceOpened;
-
+            WorkspaceManager.OnProjectAdded += WorkspaceManager_OnProjectAdded;
             if (!string.IsNullOrEmpty(OpenTarget))
                 OpenFile(OpenTarget);
         }
 
+        private void WorkspaceManager_OnProjectAdded(object sender, ProjectAddedEventArgs e)
+        {
+            cboProject.Items.Add(e.AddedProject);
+        }
+
         private void WorkspaceManager_OnWorkspaceOpened(object sender, WorkspaceOpenedEventArgs e)
         {
-            //TODO 
-            // Bind projects to build project combo box (include an "All Projects" item?)
+            cboProject.Items.Clear();
+            foreach(var project in e.OpenedWorkspace.Projects)
+            {
+                cboProject.Items.Add(project.Value);
+            }
+            cboProject.SelectedIndex = 0;
+
+            if (!toolStrip1.Enabled)
+                toolStrip1.Enabled = true;
         }
 
         private void FOpen_Click(object sender, EventArgs e)
@@ -181,6 +192,26 @@ namespace Sm4shCommand
             if (ofDlg.ShowDialog() == DialogResult.OK)
             {
                 OpenFile(ofDlg.FileName);
+            }
+        }
+
+        private void btnBuild_Click(object sender, EventArgs e)
+        {
+            BuildProject(((Project)cboProject.SelectedItem));
+        }
+        private void BuildProject(Project p)
+        {
+            Util.LogMessage($"Building project {p.ProjName}");
+            WorkspaceManager.CompileFighter(p.Includes.Find(x => x.RealPath.EndsWith(".mlist")).RealPath,
+                                            p.Platform,
+                                            Path.Combine(p.ProjDirectory, "bin", FIGHTER_GLOBALS.ACMD_DIR));
+        }
+
+        private void buildWorkspaceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach(Project p in cboProject.Items)
+            {
+                BuildProject(p);
             }
         }
     }
