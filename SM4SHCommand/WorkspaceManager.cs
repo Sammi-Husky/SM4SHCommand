@@ -27,11 +27,6 @@ namespace Sm4shCommand
 
         public void CreateNewWorkspace(string filename)
         {
-            if (TargetWorkspace != null)
-            {
-                CloseWorkspace();
-            }
-
             TargetWorkspace = new Workspace
             {
                 WorkspaceName = Path.GetFileNameWithoutExtension(filename),
@@ -43,10 +38,10 @@ namespace Sm4shCommand
         }
         public void OpenWorkspace(string filepath)
         {
-            if(TargetWorkspace != null && CloseWorkspace() == DialogResult.Cancel)
-            {
-                return;
-            }
+            // if(TargetWorkspace != null && CloseWorkspace() == DialogResult.Cancel)
+            // {
+            //     return;
+            // }
 
             TargetWorkspace = new Workspace
             {
@@ -360,7 +355,6 @@ namespace Sm4shCommand
                 return false;
             }
         }
-
     }
 
     public class ProjectOpenedEventArgs : EventArgs

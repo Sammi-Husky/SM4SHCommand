@@ -159,7 +159,6 @@ namespace Sm4shCommand
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
-
             Explorer = new WorkspaceExplorer();
             AddDockedControl(Explorer, DockState.DockRight);
             WorkspaceManager = new WorkspaceManager(Explorer);
@@ -177,11 +176,13 @@ namespace Sm4shCommand
         private void WorkspaceManager_OnWorkspaceOpened(object sender, WorkspaceOpenedEventArgs e)
         {
             cboProject.Items.Clear();
-            foreach(var project in e.OpenedWorkspace.Projects)
+            foreach (var project in e.OpenedWorkspace.Projects)
             {
                 cboProject.Items.Add(project.Value);
             }
-            cboProject.SelectedIndex = 0;
+
+            if (cboProject.Items.Count > 0)
+                cboProject.SelectedIndex = 0;
 
             if (!toolStrip1.Enabled)
                 toolStrip1.Enabled = true;
@@ -209,7 +210,7 @@ namespace Sm4shCommand
 
         private void buildWorkspaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach(Project p in cboProject.Items)
+            foreach (Project p in cboProject.Items)
             {
                 BuildProject(p);
             }
